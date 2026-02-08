@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>霓虹蛇 | Neon Snake Game</title>
+    <meta name="description" content="體驗未來感的霓虹貪吃蛇遊戲，登錄追蹤您的最高分數">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Chakra+Petch:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Background Effects -->
+    <div class="grid-bg"></div>
+    <div class="scanlines"></div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen active">
+        <div class="login-container">
+            <div class="logo-section">
+                <h1 class="neon-title">
+                    <span class="glitch" data-text="霓虹蛇">霓虹蛇</span>
+                </h1>
+                <div class="subtitle">NEON SNAKE</div>
+            </div>
+
+            <div class="auth-forms">
+                <!-- Login Form -->
+                <div id="loginForm" class="auth-form active">
+                    <h2>登錄 / LOGIN</h2>
+                    <div class="form-group">
+                        <input type="text" id="loginUsername" class="neon-input" placeholder="用戶名稱" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="loginPassword" class="neon-input" placeholder="密碼" required>
+                    </div>
+                    <div class="error-message" id="loginError"></div>
+                    <button id="loginBtn" class="neon-btn primary">進入遊戲</button>
+                    <p class="switch-form">
+                        還沒有帳號？ <a href="#" id="showRegister">立即註冊</a>
+                    </p>
+                    <div class="guest-divider">
+                        <span>或</span>
+                    </div>
+                    <button id="guestLoginBtn" class="neon-btn secondary">訪客模式</button>
+                </div>
+
+                <!-- Register Form -->
+                <div id="registerForm" class="auth-form">
+                    <h2>註冊 / REGISTER</h2>
+                    <div class="form-group">
+                        <input type="text" id="registerUsername" class="neon-input" placeholder="用戶名稱" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="registerPassword" class="neon-input" placeholder="密碼" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="registerConfirmPassword" class="neon-input" placeholder="確認密碼"
+                            required>
+                    </div>
+                    <div class="error-message" id="registerError"></div>
+                    <button id="registerBtn" class="neon-btn primary">創建帳號</button>
+                    <p class="switch-form">
+                        已有帳號？ <a href="#" id="showLogin">返回登錄</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="gameScreen" class="screen">
+        <div class="game-layout">
+            <!-- Header -->
+            <header class="game-header">
+                <div class="user-info">
+                    <div class="user-avatar"></div>
+                    <div class="user-details">
+                        <div class="username" id="currentUser"></div>
+                        <div class="login-time" id="loginTime"></div>
+                    </div>
+                </div>
+
+                <div class="score-display">
+                    <div class="score-label">SCORE</div>
+                    <div class="score-value" id="currentScore">0</div>
+                </div>
+
+                <div class="high-score-display">
+                    <div class="score-label">HIGH SCORE</div>
+                    <div class="score-value" id="highScore">0</div>
+                </div>
+
+                <button id="logoutBtn" class="neon-btn secondary">登出</button>
+            </header>
+
+            <!-- Main Game Area -->
+            <main class="game-main">
+                <div class="game-container">
+                    <canvas id="gameCanvas"></canvas>
+
+                    <!-- Game Over Overlay -->
+                    <div id="gameOverlay" class="game-overlay hidden">
+                        <div class="overlay-content">
+                            <h2 class="game-over-title">GAME OVER</h2>
+                            <div class="final-score">
+                                <div class="label">最終分數</div>
+                                <div class="value" id="finalScore">0</div>
+                            </div>
+                            <button id="restartBtn" class="neon-btn primary">再玩一次</button>
+                            <button id="viewLeaderboardBtn" class="neon-btn secondary">查看排行榜</button>
+                        </div>
+                    </div>
+
+                    <!-- Start Overlay -->
+                    <div id="startOverlay" class="game-overlay">
+                        <div class="overlay-content">
+                            <h2 class="welcome-title">準備開始</h2>
+                            <div class="instructions">
+                                <p>使用方向鍵或 WASD 控制蛇的移動</p>
+                                <div class="key-hints">
+                                    <div class="key">↑</div>
+                                    <div class="key">←</div>
+                                    <div class="key">↓</div>
+                                    <div class="key">→</div>
+                                </div>
+                                <p>按空白鍵暫停遊戲</p>
+                            </div>
+                            <button id="startGameBtn" class="neon-btn primary pulse">開始遊戲</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar Stats -->
+                <aside class="stats-sidebar">
+                    <div class="stat-card">
+                        <h3 class="card-title">遊戲統計</h3>
+                        <div class="stat-item">
+                            <span class="stat-label">遊戲次數</span>
+                            <span class="stat-value" id="totalGames">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">平均分數</span>
+                            <span class="stat-value" id="avgScore">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">最高紀錄</span>
+                            <span class="stat-value" id="personalBest">0</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <h3 class="card-title">最近成績</h3>
+                        <div id="recentScores" class="recent-scores-list">
+                            <div class="no-data">暫無記錄</div>
+                        </div>
+                    </div>
+
+                    <button id="showLeaderboardBtn" class="neon-btn secondary full-width">排行榜</button>
+                </aside>
+            </main>
+        </div>
+    </div>
+
+    <!-- Leaderboard Screen -->
+    <div id="leaderboardScreen" class="screen">
+        <div class="leaderboard-container">
+            <div class="leaderboard-header">
+                <h1 class="neon-title">
+                    <span class="glitch" data-text="排行榜">排行榜</span>
+                </h1>
+                <div class="subtitle">GLOBAL LEADERBOARD</div>
+            </div>
+
+            <div class="leaderboard-content">
+                <div class="leaderboard-table">
+                    <div class="table-header">
+                        <div class="rank-col">排名</div>
+                        <div class="player-col">玩家</div>
+                        <div class="score-col">分數</div>
+                        <div class="date-col">日期</div>
+                    </div>
+                    <div id="leaderboardBody" class="table-body">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <button id="backToGameBtn" class="neon-btn primary">返回遊戲</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="audio-manager.js"></script>
+    <script src="data-manager.js"></script>
+    <script src="snake-game.js"></script>
+    <script src="app.js"></script>
+
+</body>
+
+</html>
